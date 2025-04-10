@@ -130,7 +130,7 @@ async function main(): Promise<void> {
       return
     }
 
-    const id = convoCache.get('id')
+    const id = convoCache.get(`id-${ctx.from.id}`)
     d('msg: %o', ctx.message)
 
     const rq = latestApi
@@ -145,7 +145,7 @@ async function main(): Promise<void> {
       const msgText = messagesToString([msg])
       if (msgText.length < 1) return
 
-      convoCache.set('id', msg.serverId)
+      convoCache.set(`id-${ctx.from.id}`, msg.serverId)
       void ctx.reply(msgText)
     })
 

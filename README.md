@@ -39,10 +39,10 @@ bun run dev:debug
 
 ## Environment Variables
 
-- `TELEGRAM_BOT_TOKEN`: Your Telegram bot token from BotFather (required)
-- `BEATRIX_WS_URL`: WebSocket URL for the Beatrix server (default: ws://localhost:8080/api/ws)
-- `LLM_MODEL`: The LLM model to use (default: claude-3-haiku-20240307)
+- `TELEGRAM_BOT_TOKEN`: Your Telegram bot token from BotFather
+- `TELEGRAM_USER_WHITELIST`: Comma-separated list of user IDs allowed to use the bot
 - `LLM_DRIVER`: The LLM driver to use (default: anthropic)
+- `BEATRIX_WS_URL`: WebSocket URL for the Beatrix server
 - `CONVERSATION_TIMEOUT_MS`: Duration in milliseconds before starting a new conversation (default: 300000, or 5 minutes)
 
 ## How It Works
