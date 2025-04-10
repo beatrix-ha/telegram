@@ -1,0 +1,33 @@
+{
+  "name": "beatrix-telegram",
+  "module": "src/index.ts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "bun run ./src/index.ts",
+    "dev:debug": "DEBUG='*' bun run ./src/index.ts",
+    "f": "bun fix && bun lint && bun test",
+    "fix": "eslint --fix && prettier --write .",
+    "lint": "tsc && eslint && prettier --check ."
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0",
+    "debug": "^4.4.0",
+    "dotenv": "^16.5.0",
+    "lru-cache": "^11.1.0",
+    "rxjs": "^7.8.2",
+    "telegraf": "^4.16.3"
+  },
+  "devDependencies": {
+    "@trivago/prettier-plugin-sort-imports": "^5.2.2",
+    "@types/bun": "latest",
+    "@types/debug": "^4.1.12",
+    "@typescript-eslint/eslint-plugin": "^8.29.1",
+    "@typescript-eslint/parser": "^8.29.1",
+    "eslint": "^9.24.0",
+    "prettier": "^3.5.3"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  }
+}
