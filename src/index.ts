@@ -30,7 +30,9 @@ const BEATRIX_WS_URL = process.env.BEATRIX_WS_URL
 const CONVERSATION_TIMEOUT_MS = parseInt(
   process.env.CONVERSATION_TIMEOUT_MS || '300000',
   10
-) // 5 minutes in milliseconds
+)
+
+// 5 minutes in milliseconds
 const TELEGRAM_USER_WHITELIST = process.env.TELEGRAM_USER_WHITELIST?.split(',')
 
 function connectApiToWs() {
@@ -44,7 +46,7 @@ function connectApiToWs() {
         map(() => {
           const msgs: Subject<IpcResponse> = new Subject()
 
-          fromEvent<MessageEvent>(ws, 'message')
+          fromEvent(ws, 'message', (m) => m as MessageEvent)
             .pipe(
               mergeMap((msg) => {
                 if (typeof msg.data !== 'string') {
