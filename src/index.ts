@@ -19,6 +19,18 @@ import { ServerWebsocketApi, messagesToString } from './lib/api'
 import { Asyncify, IpcResponse } from './lib/ws-rpc'
 import { createRemoteClient } from './lib/ws-rpc-client'
 
+// Define webhook launch options interface
+interface WebhookConfig {
+  domain: string
+  path?: string
+  port?: number
+  secretToken?: string
+}
+
+interface LaunchOptions {
+  webhook: WebhookConfig
+}
+
 // Load environment variables
 config()
 
@@ -31,6 +43,14 @@ const CONVERSATION_TIMEOUT_MS = parseInt(
   process.env.CONVERSATION_TIMEOUT_MS || '300000',
   10
 )
+
+// Webhook configuration
+const WEBHOOK_DOMAIN = process.env.WEBHOOK_DOMAIN
+const WEBHOOK_PORT = process.env.WEBHOOK_PORT
+  ? parseInt(process.env.WEBHOOK_PORT, 10)
+  : undefined
+const WEBHOOK_PATH = process.env.WEBHOOK_PATH
+const WEBHOOK_SECRET_TOKEN = process.env.WEBHOOK_SECRET_TOKEN
 
 // 5 minutes in milliseconds
 const TELEGRAM_USER_WHITELIST = process.env.TELEGRAM_USER_WHITELIST?.split(',')
@@ -158,7 +178,34 @@ async function main(): Promise<void> {
   process.once('SIGINT', () => bot.stop('SIGINT'))
   process.once('SIGTERM', () => bot.stop('SIGTERM'))
 
-  await bot.launch()
+  // Launch bot based on configuration
+  if (WEBHOOK_DOMAIN && WEBHOOK_PORT) {
+    // Production mode with webhooks
+    const webhookConfig: LaunchOptions = {
+      webhook: {
+        domain: WEBHOOK_DOMAIN,
+        port: WEBHOOK_PORT,
+      },
+    }
+
+    // Add optional webhook configuration if provided
+    if (WEBHOOK_PATH) {
+      webhookConfig.webhook.path = WEBHOOK_PATH
+    }
+
+    if (WEBHOOK_SECRET_TOKEN) {
+      webhookConfig.webhook.secretToken = WEBHOOK_SECRET_TOKEN
+    }
+
+    console.log('Starting bot in production mode with webhook')
+    await bot.launch(webhookConfig)
+    console.log(`Webhook is set up at ${WEBHOOK_DOMAIN}`)
+  } else {
+    // Development mode with long polling
+    console.log('Starting bot in development mode with long polling')
+    await bot.launch()
+  }
+
   console.log('Bot started successfully')
 }
 
