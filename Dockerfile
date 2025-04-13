@@ -26,10 +26,11 @@ COPY --from=builder /app/dist /dist
 # Remove Windows executable
 RUN rm /dist/beatrix-telegram-win32-x64.exe
 
-# Expose necessary ports
-ENV PORT=8080
-ENV NODE_ENV=production
-EXPOSE ${PORT}
+# Environment variables
+ENV TELEGRAM_BOT_TOKEN=""
+ENV BEATRIX_WS_URL=""
+ENV CONVERSATION_TIMEOUT_MS="300000"
+ENV TELEGRAM_USER_WHITELIST=""
 
 # Use architecture detection to run the correct binary
 CMD if [ "$(uname -m)" = "x86_64" ]; then \
