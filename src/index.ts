@@ -27,7 +27,7 @@ const d = debug('b:telegram')
 
 // Environment variables
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || ''
-const BEATRIX_WS_URL = process.env.BEATRIX_WS_URL
+const BEATRIX_URL = process.env.BEATRIX_URL
 const CONVERSATION_TIMEOUT_MS = parseInt(
   process.env.CONVERSATION_TIMEOUT_MS || '300000',
   10
@@ -38,7 +38,7 @@ const TELEGRAM_USER_WHITELIST = process.env.TELEGRAM_USER_WHITELIST?.split(',')
 
 function connectApiToWs() {
   return new Observable<Asyncify<ServerWebsocketApi>>((subj) => {
-    const url = BEATRIX_WS_URL?.replace(/^http/i, 'ws') + '/api/ws'
+    const url = BEATRIX_URL?.replace(/^http/i, 'ws') + '/api/ws'
     d('Beatrix URL: %s', url)
     const ws = new WebSocket(url)
 
@@ -118,7 +118,7 @@ async function main(): Promise<void> {
     .pipe(retry())
     .subscribe({
       next: (x) => {
-        d('Connected to Beatrix instance %s', BEATRIX_WS_URL)
+        d('Connected to Beatrix instance %s', BEATRIX_URL)
         latestApi = x
       },
       error: (e) => {
