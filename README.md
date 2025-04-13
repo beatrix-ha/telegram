@@ -2,6 +2,23 @@
 
 A Telegram bot that connects to a Beatrix instance via WebSocket and allows users to interact with Beatrix through Telegram.
 
+## Setup (Docker Compose)
+
+1. Create a Telegram bot using [@BotFather](https://t.me/botfather) and get your API token
+
+2. Create a `docker-compose.yml` file with the following content:
+
+```yaml
+services:
+  beatrix-telegram:
+    image: ghcr.io/beatrix-ha/telegram:latest
+    restart: unless-stopped
+    environment:
+      - TELEGRAM_BOT_TOKEN=your_telegram_bot_token
+      - TELEGRAM_USER_WHITELIST=user1,user2
+      - BEATRIX_WS_URL=https://your-beatrix-instance
+```
+
 ## Setup (development)
 
 1. Create a Telegram bot using [@BotFather](https://t.me/botfather) and get your API token
