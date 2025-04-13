@@ -1,0 +1,36 @@
+# Git
+.git
+.gitignore
+
+# Build directories
+dist
+build
+
+# Node.js dependencies
+node_modules
+
+# Bun lock files when not needed
+# Leave bun.lockb uncommented to copy it into the image
+
+# Environment variables - never include these in Docker
+.env
+.env.*
+
+# Editor configs
+.vscode
+.idea
+*.iml
+.editorconfig
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Testing
+coverage
+.nyc_output
+
+# OS files
+.DS_Store
+Thumbs.db 

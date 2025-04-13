@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "bun run ./src/index.ts",
     "dev:debug": "DEBUG='*' bun run ./src/index.ts",
+    "build": "bun run ./scripts/build-server.ts",
+    "start": "bun run ./dist/index.js",
     "f": "bun fix && bun lint && bun test",
     "fix": "eslint --fix && prettier --write .",
     "lint": "tsc && eslint && prettier --check ."
@@ -25,7 +27,8 @@
     "@typescript-eslint/eslint-plugin": "^8.29.1",
     "@typescript-eslint/parser": "^8.29.1",
     "eslint": "^9.24.0",
-    "prettier": "^3.5.3"
+    "prettier": "^3.5.3",
+    "spawn-rx": "^5.1.2"
   },
   "peerDependencies": {
     "typescript": "^5"

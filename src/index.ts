@@ -10,6 +10,7 @@ import {
   map,
   mergeMap,
   of,
+  retry,
   share,
 } from 'rxjs'
 import { Telegraf } from 'telegraf'
@@ -103,6 +104,7 @@ async function main(): Promise<void> {
     console.error(
       'TELEGRAM_BOT_TOKEN and TELEGRAM_USER_WHITELIST environment variables are required'
     )
+
     throw new Error('Missing env vars')
   }
 
@@ -111,8 +113,9 @@ async function main(): Promise<void> {
   const bot = new Telegraf(TELEGRAM_BOT_TOKEN)
 
   let latestApi: Asyncify<ServerWebsocketApi> | null = null
+
   connectApiToWs()
-    //.pipe(retry())
+    .pipe(retry())
     .subscribe({
       next: (x) => {
         d('Connected to Beatrix instance %s', BEATRIX_WS_URL)
@@ -158,7 +161,9 @@ async function main(): Promise<void> {
   process.once('SIGINT', () => bot.stop('SIGINT'))
   process.once('SIGTERM', () => bot.stop('SIGTERM'))
 
+  console.log('Starting bot in long polling mode')
   await bot.launch()
+
   console.log('Bot started successfully')
 }
 
