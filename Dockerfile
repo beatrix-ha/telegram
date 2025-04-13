@@ -13,7 +13,7 @@ RUN bun install --frozen-lockfile
 COPY . .
 
 # Build the application
-RUN bun run build:all
+RUN bun run build
 
 # Production stage
 FROM debian:stable
