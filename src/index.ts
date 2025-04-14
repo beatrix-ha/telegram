@@ -1,3 +1,4 @@
+import { MessageParam } from '@anthropic-ai/sdk/resources/index.mjs'
 import debug from 'debug'
 import { config } from 'dotenv'
 import { LRUCache } from 'lru-cache'
@@ -16,7 +17,7 @@ import {
 import { Telegraf } from 'telegraf'
 import { message } from 'telegraf/filters'
 
-import { ServerWebsocketApi, messagesToString } from './lib/api'
+import { ServerWebsocketApi } from './lib/api'
 import { Asyncify, IpcResponse } from './lib/ws-rpc'
 import { createRemoteClient } from './lib/ws-rpc-client'
 
@@ -139,7 +140,7 @@ async function main(): Promise<void> {
     d('msg: %o', ctx.message)
 
     const rq = latestApi
-      ?.handlePromptRequest(ctx.message.text, undefined, undefined, id)
+      ?.handlePromptRequest(ctx.message.text, undefined, undefined, id, 'chat')
       .pipe(share())
 
     if (!rq) return
@@ -147,7 +148,7 @@ async function main(): Promise<void> {
     rq.subscribe((msg) => {
       if (msg.role === 'user') return
 
-      const msgText = messagesToString([msg])
+      const msgText = messagesToStringTelegram([msg])
       if (msgText.length < 1) return
 
       convoCache.set(`id-${ctx.from.id}`, msg.serverId)
@@ -165,6 +166,41 @@ async function main(): Promise<void> {
   await bot.launch()
 
   console.log('Bot started successfully')
+}
+
+export function messagesToStringTelegram(
+  msgs: MessageParam[],
+  annotateSides: boolean = false
+) {
+  return msgs
+    .reduce((acc, msg) => {
+      const side = annotateSides ? `${msg.role}: ` : ''
+
+      if (msg.content instanceof Array) {
+        msg.content.forEach((subMsg) => {
+          switch (subMsg.type) {
+            case 'text':
+              acc.push(side + subMsg.text)
+              break
+            /*
+            case 'tool_use':
+              acc.push(
+                `Running tool: ${subMsg.name}, ${JSON.stringify(subMsg.input)}\n`
+              )
+              break
+            case 'tool_result':
+              acc.push(`${JSON.stringify(subMsg.content)}\n`)
+              break
+              */
+          }
+        })
+      } else {
+        acc.push(side + msg.content)
+      }
+
+      return acc
+    }, [] as string[])
+    .join('\n\n---\n\n')
 }
 
 main().catch((e) => {
