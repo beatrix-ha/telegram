@@ -13,6 +13,7 @@ import {
   of,
   retry,
   share,
+  tap,
 } from 'rxjs'
 import { Telegraf } from 'telegraf'
 import { message } from 'telegraf/filters'
@@ -116,7 +117,15 @@ async function main(): Promise<void> {
   let latestApi: Asyncify<ServerWebsocketApi> | null = null
 
   connectApiToWs()
-    .pipe(retry())
+    .pipe(
+      tap({
+        error: (e: any) => {
+          console.error('Error connecting to Beatrix instance %s', BEATRIX_URL)
+          console.error(e)
+        },
+      }),
+      retry()
+    )
     .subscribe({
       next: (x) => {
         d('Connected to Beatrix instance %s', BEATRIX_URL)
