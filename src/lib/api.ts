@@ -1,6 +1,14 @@
 import { MessageParam } from '@anthropic-ai/sdk/resources/index.js'
 import { Observable } from 'rxjs'
 
+import { AppConfig, TypeHint } from './types'
+import {
+  Automation,
+  AutomationLogEntry,
+  ScenarioResult,
+  SignalHandlerInfo,
+} from './types'
+
 export type MessageParamWithExtras = MessageParam & {
   serverId: number
 }
@@ -10,8 +18,28 @@ export interface ServerWebsocketApi {
     prompt: string,
     model?: string,
     driver?: string,
-    previousConversationId?: number
+    previousConversationId?: number,
+    typeHint?: TypeHint
   ): Observable<MessageParamWithExtras>
+
+  runEvals(
+    model: string,
+    driver: string,
+    type: 'all' | 'quick',
+    count: number
+  ): Observable<ScenarioResult>
+
+  getModelListForDriver(driver: string): Observable<string[]>
+  getDriverList(): Observable<string[]>
+
+  getAutomationLogs(beforeTimestamp?: Date): Observable<AutomationLogEntry[]>
+
+  getAutomations(): Observable<Automation[]>
+  getCues(): Observable<Automation[]>
+  getScheduledSignals(): Observable<SignalHandlerInfo[]>
+
+  getConfig(): Observable<AppConfig>
+  setConfig(config: AppConfig): Observable<void>
 }
 
 export function messagesToString(
@@ -27,6 +55,14 @@ export function messagesToString(
           switch (subMsg.type) {
             case 'text':
               acc.push(side + subMsg.text)
+              break
+            case 'tool_use':
+              acc.push(
+                `Running tool: ${subMsg.name}, ${JSON.stringify(subMsg.input)}\n`
+              )
+              break
+            case 'tool_result':
+              acc.push(`${JSON.stringify(subMsg.content)}\n`)
               break
           }
         })
