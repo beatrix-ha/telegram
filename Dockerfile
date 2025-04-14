@@ -28,7 +28,7 @@ RUN rm /dist/beatrix-telegram-win32-x64.exe
 
 # Environment variables
 ENV TELEGRAM_BOT_TOKEN=""
-ENV BEATRIX_WS_URL=""
+ENV BEATRIX_URL=""
 ENV CONVERSATION_TIMEOUT_MS="300000"
 ENV TELEGRAM_USER_WHITELIST=""
 
