@@ -16,7 +16,7 @@ services:
     environment:
       - TELEGRAM_BOT_TOKEN=your_telegram_bot_token
       - TELEGRAM_USER_WHITELIST=user1,user2
-      - BEATRIX_WS_URL=https://your-beatrix-instance
+      - BEATRIX_URL=https://your-beatrix-instance
 ```
 
 ## Setup (development)
