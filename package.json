@@ -1,6 +1,6 @@
 {
   "name": "beatrix-telegram",
-  "version": "v0.6.0",
+  "version": "v0.6.2",
   "module": "src/index.ts",
   "type": "module",
   "private": true,
