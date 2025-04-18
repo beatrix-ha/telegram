@@ -145,26 +145,36 @@ async function main(): Promise<void> {
       return
     }
 
-    const id = convoCache.get(`id-${ctx.from.id}`)
-    d('msg: %o', ctx.message)
+    try {
+      const id = convoCache.get(`id-${ctx.from.id}`)
+      d('msg: %o', ctx.message)
 
-    const rq = latestApi
-      ?.handlePromptRequest(ctx.message.text, undefined, undefined, id, 'chat')
-      .pipe(share())
+      const rq = latestApi
+        ?.handlePromptRequest(
+          ctx.message.text,
+          undefined,
+          undefined,
+          id,
+          'chat'
+        )
+        .pipe(share())
 
-    if (!rq) return
+      if (!rq) return
 
-    rq.subscribe((msg) => {
-      if (msg.role === 'user') return
+      rq.subscribe((msg) => {
+        if (msg.role === 'user') return
 
-      const msgText = messagesToStringTelegram([msg])
-      if (msgText.length < 1) return
+        const msgText = messagesToStringTelegram([msg])
+        if (msgText.length < 1) return
 
-      convoCache.set(`id-${ctx.from.id}`, msg.serverId)
-      void ctx.reply(msgText)
-    })
+        convoCache.set(`id-${ctx.from.id}`, msg.serverId)
+        void ctx.reply(msgText)
+      })
 
-    await lastValueFrom(rq)
+      await lastValueFrom(rq)
+    } catch (e) {
+      console.error('Failed to send message', e)
+    }
   })
 
   // Enable graceful stop
